@@ -3,14 +3,16 @@
 #include "nav_msgs/Odometry.h"
 #include <cmath>
 
-double pickGoal[2]  = {7.5, -10.0};
-double dropGoal[2] = {17.3, -3.7};
+double pickGoal[2]  = {4.0, -3.0};
+double dropGoal[2] = {0, 0};
 double pose[2] = {0, 0};
 
 void get_pose_callback(const nav_msgs::Odometry::ConstPtr& msg)
 {
   pose[0] = msg->pose.pose.position.x;
   pose[1] = msg->pose.pose.position.y;
+//   ROS_INFO("current x %f", pose[0]);
+//   ROS_INFO("current y %f", pose[0]);
 }
 
 bool reach_goal(double currentPose[2], double goal[2])
@@ -74,8 +76,6 @@ int main( int argc, char** argv )
 
     ROS_INFO("Moving to the pick up position");
 
-    ros::spinOnce();
-
     if (state == PICKUP) {
       marker.action = visualization_msgs::Marker::ADD;
       marker.pose.position.x = pickGoal[0];
@@ -90,18 +90,22 @@ int main( int argc, char** argv )
     else if (state == CARRY) {
       ROS_INFO("Moving to drop off position");
       marker.action = visualization_msgs::Marker::DELETE;
+      marker.pose.position.x = dropGoal[0];
+      marker.pose.position.y = dropGoal[1];
       marker_pub.publish(marker);
       if (reach_goal(pose, dropGoal)) {
         state = DROP;
       }
     }
-    else /* state == DROP */ {
+    else {
       ROS_INFO("Reached the drop off position");
+      sleep(5);
       marker.action = visualization_msgs::Marker::ADD;
       marker.pose.position.x = dropGoal[0];
       marker.pose.position.y = dropGoal[1];
       marker_pub.publish(marker);
     }
+    ros::spinOnce();
     sleep(1);
   }
 }
