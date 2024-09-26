@@ -83,7 +83,7 @@ int main( int argc, char** argv )
       marker_pub.publish(marker);
       if (reach_goal(pose, pickGoal)) {
         ROS_INFO("Picking up the package");
-        sleep(5);
+        sleep(4.5);
         state = CARRY;
       }
     }
