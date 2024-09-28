@@ -63,9 +63,11 @@ int main(int argc, char** argv){
 
   sleep(5); // simulate the picking up
 
+  // Receive a new goal from publisher visualization_marker
   ros::spinOnce();
   ROS_INFO("Receive drop off coordinate");
 
+  // Moving to the new goal: drop off position
   send_goal_to_move_base(ac, goal[0], goal[1], 1.0);
 
   ROS_INFO("Reached the drop off zone");
